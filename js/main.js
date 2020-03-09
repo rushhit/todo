@@ -1,19 +1,34 @@
-function validate() {
+// function ysYonlendir(ID, adres, saniye) { 
+//     if (saniye == 0) {   
+//         window.location.href = adres;   
+//         return; 
+//     } 
+//     document.getElementById(ID).innerHTML = saniye + " saniye sonra yönlendiriliyorsunuz."; 
+//     saniye--; 
+//     setTimeout(function() {   
+//         ysYonlendir(ID, adres, saniye); 
+//     }, 1000);
+// }
+
+function login() {
     var username = document.getElementById("inputEU").value;
     var password = document.getElementById("inputPassword").value;
-    if ((inputEU == "Kafein" || inputEU == "kafein@kafein.com") && inputPassword == "Kafein123") {
-        alert("Giriş Başarılı");
-        window.location = "todolist.html";
+    if (username == "Kafein" && password == "Kafein123") {
+
+        swal({
+            title: "Giriş Başarılı!",
+            icon: "success",
+            button: "Kapat",
+        });
+        //document.getElementById("successlogin").innerHTML = "Giriş Başarılı.";
+        // ysYonlendir("uyari", "todolist.html", 5);
+
         return false;
     } else {
-        attempt--; // Decrementing by one.
-        alert("Giriş Başarısız");
-
-        if (attempt == 0) {
-            document.getElementById("inputEU").disabled = true;
-            document.getElementById("inputPassword").disabled = true;
-            document.getElementById("signin").disabled = true;
-            return false;
-        }
+        swal({
+            title: "Giriş Başarısız!",
+            icon: "warning",
+            button: "Kapat",
+        });
     }
 }
