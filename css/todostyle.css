@@ -14,7 +14,7 @@ body {
 .header {
     width: 380px;
     height: 200px;
-    background-image: url('../img/bg2.jpg');
+    background-color: green;
     background-size: 100% 200%;
     background-repeat: no-repeat;
     border-radius: 15px 15px 0 0;
@@ -27,6 +27,14 @@ body {
     position: absolute;
     right: 20px;
     top: 20px;
+}
+
+.login {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    left: 20px;
+    top: 0px;
 }
 
 .clear i {
