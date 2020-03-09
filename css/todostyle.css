@@ -37,6 +37,15 @@ body {
     top: 0px;
 }
 
+#username {
+    text-shadow: 1px 1px #6eb200;
+    box-shadow: 0 0 0 2px black;
+    border-radius: 4px;
+    padding: 2px;
+    width: max-content;
+    color: #FFF;
+}
+
 .clear i {
     font-size: 30px;
     color: #FFF;

@@ -1,176 +1,134 @@
+function login() {
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    if (username == "Kafein" && password == "Kafein") {
+        alert("Giriş Başarılı");
+        window.location = "todolist.html";
+        localStorage.setItem("username", username);
+        localStorage.setItem("logged", true);
+        // document.getElementById("username").innerHTML = username;
+        return false;
+    } else {
+        alert("Kullanıcı adı yada Şifre yanlış");
+        window.location = "index.html";
+        return false;
+    }
+}
+
+// todo
+const clear = document.querySelector(".clear");
+const dateElement = document.getElementById("date");
+const list = document.getElementById("list");
+const input = document.getElementById("input");
+
 const CHECK = "fa-check-circle";
 const UNCHECK = "fa-circle-thin";
 const LINE_THROUGH = "lineThrough";
+
 let LIST, id;
 
-var main = {
-
-    login: function() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-
-        if (username === "Kafein" && password === "Kafein") {
-            alert("Giriş Başarılı");
-            window.location = "todolist.html";
-            localStorage.setItem("username", username);
-            localStorage.setItem("logged", true);
-        } else {
-            alert("Kullanıcı adı yada Şifre yanlış");
-            localStorage.removeItem("username");
-            localStorage.removeItem("logged");
-            window.location = "index.html";
-        }
-    },
-
-    loadList: function(array) {
-        array.forEach(function(item) {
-            main.addToDo(item.name, item.id, item.done, item.trash);
-        });
-    },
+let data = localStorage.getItem("TODO");
 
 
-    addToDo: function(toDo, id, done, trash) {
 
-        if (trash) { return; }
+if (data) {
+    LIST = JSON.parse(data);
+    id = LIST.length;
+    loadList(LIST);
+} else {
+    LIST = [];
+    id = 0;
+}
 
-        const DONE = done ? CHECK : UNCHECK;
-        const LINE = done ? LINE_THROUGH : "";
+function loadList(array) {
+    array.forEach(function(item) {
+        addToDo(item.name, item.id, item.done, item.trash);
+    });
+}
 
-        const item = `<li class="item">
+clear.addEventListener("click", function() {
+    localStorage.clear();
+    location.reload();
+});
+
+const options = { weekday: "long", month: "short", day: "numeric" };
+const today = new Date();
+
+dateElement.innerHTML = today.toLocaleDateString("tr-TR", options);
+
+
+function addToDo(toDo, id, done, trash) {
+
+    if (trash) { return; }
+
+    const DONE = done ? CHECK : UNCHECK;
+    const LINE = done ? LINE_THROUGH : "";
+
+    const item = `<li class="item">
                     <i class="fa ${DONE} co" job="complete" id="${id}"></i>
                     <p class="text ${LINE}">${toDo}</p>
                     <i class="fa fa-trash-o de" job="delete" id="${id}"></i>
                   </li>
                 `;
 
-        const position = "beforeend";
+    const position = "beforeend";
 
-        list.insertAdjacentHTML(position, item);
-    },
+    list.insertAdjacentHTML(position, item);
+}
 
+document.addEventListener("keyup", function(even) {
+    if (event.keyCode == 13) {
+        const toDo = input.value;
 
-    completeToDo: function(element) {
-        element.classList.toggle(CHECK);
-        element.classList.toggle(UNCHECK);
-        element.parentNode.querySelector(".text").classList.toggle(LINE_THROUGH);
+        if (toDo) {
+            addToDo(toDo, id, false, false);
 
-        LIST[element.id].done = LIST[element.id].done ? false : true;
-    },
-
-    removeToDo: function(element) {
-        element.parentNode.parentNode.removeChild(element.parentNode);
-
-        LIST[element.id].trash = true;
-    },
-
-    loadEvents: function() {
-
-
-        // todo
-        const clear = document.querySelector(".clear");
-        const dateElement = document.getElementById("date");
-        const list = document.getElementById("list");
-
-
-
-
-
-
-        let data = localStorage.getItem("TODO");
-
-
-
-        if (data) {
-            LIST = JSON.parse(data);
-            id = LIST.length;
-            main.loadList(LIST);
-        } else {
-            LIST = [];
-            id = 0;
-        }
-
-
-        if (clear) {
-            clear.addEventListener("click", function() {
-                const username = localStorage.getItem("username");
-                localStorage.clear();
-                location.reload();
-                // Avoid clear the username
-                localStorage.setItem("username", username);
+            LIST.push({
+                name: toDo,
+                id: id,
+                done: false,
+                trash: false
             });
+
+            localStorage.setItem("TODO", JSON.stringify(LIST));
+
+            id++;
         }
-
-        if (dateElement) {
-            const options = { weekday: "long", month: "short", day: "numeric" };
-            const today = new Date();
-
-            dateElement.innerHTML = today.toLocaleDateString("tr-TR", options);
-        }
+        input.value = "";
+    }
+});
 
 
-        document.addEventListener("keyup", function(even) {
+function completeToDo(element) {
+    element.classList.toggle(CHECK);
+    element.classList.toggle(UNCHECK);
+    element.parentNode.querySelector(".text").classList.toggle(LINE_THROUGH);
 
-            if (event.keyCode == 13) {
+    LIST[element.id].done = LIST[element.id].done ? false : true;
+}
 
-                // if we are on the login page
-                if (document.getElementById("username")) {
-                    main.login();
-                    return false;
-                }
+function removeToDo(element) {
+    element.parentNode.parentNode.removeChild(element.parentNode);
 
-                const input = document.getElementById("input");
-                const toDo = input.value;
-
-                if (toDo) {
-                    main.addToDo(toDo, id, false, false);
-
-                    LIST.push({
-                        name: toDo,
-                        id: id,
-                        done: false,
-                        trash: false
-                    });
-
-                    localStorage.setItem("TODO", JSON.stringify(LIST));
-
-                    id++;
-                }
-                input.value = "";
-            }
-        });
+    LIST[element.id].trash = true;
+}
 
 
 
-        if (list) {
-            list.addEventListener("click", function(event) {
-                const element = event.target;
-                const elementJob = element.attributes.job.value;
+list.addEventListener("click", function(event) {
+    const element = event.target;
+    const elementJob = element.attributes.job.value;
 
-                if (elementJob == "complete") {
-                    main.completeToDo(element);
-                } else if (elementJob == "delete") {
-                    main.removeToDo(element);
-                }
-
-                localStorage.setItem("TODO", JSON.stringify(LIST));
-            });
-        }
-
-
-    },
-
-    setUsername: function() {
-        document.getElementById("username").innerHTML = localStorage.getItem("username") || "";
+    if (elementJob == "complete") {
+        completeToDo(element);
+    } else if (elementJob == "delete") {
+        removeToDo(element);
     }
 
-
-
-};
-
+    localStorage.setItem("TODO", JSON.stringify(LIST));
+});
 
 window.onload = function() {
 
-    main.loadEvents();
-    main.setUsername();
-
+    document.getElementById("username").innerHTML = localStorage.getItem("username") || "";
 };
